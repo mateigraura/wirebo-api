@@ -1,16 +1,16 @@
-package db
+package storage
 
 import (
 	"log"
 
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
-	"github.com/mateigraura/wirebo-api/data"
+	"github.com/mateigraura/wirebo-api/domain"
 )
 
 func CreateSchema(db *pg.DB) {
 	models := []interface{}{
-		(*data.User)(nil),
+		(*domain.User)(nil),
 	}
 
 	for _, model := range models {
