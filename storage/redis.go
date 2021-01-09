@@ -1,10 +1,10 @@
 package storage
 
 import (
-	"github.com/mateigraura/wirebo-api/utils"
 	"log"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/mateigraura/wirebo-api/utils"
 )
 
 var Redis *redis.Client
