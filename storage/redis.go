@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"github.com/mateigraura/wirebo-api/utils"
 	"log"
 
 	"github.com/go-redis/redis/v8"
@@ -9,7 +10,8 @@ import (
 var Redis *redis.Client
 
 func CreateRedisClient() {
-	opt, err := redis.ParseURL("redis://localhost:6364/0")
+	host := utils.GetEnvFile()[utils.RedisHost]
+	opt, err := redis.ParseURL(host)
 	if err != nil {
 		log.Fatal(err)
 	}
