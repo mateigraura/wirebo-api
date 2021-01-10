@@ -9,22 +9,22 @@ type User struct {
 	PasswordHash string    `pg:",notnull,unique" json:"-"`
 	Username     string    `pg:",notnull,unique" json:"userName"`
 	AvatarUrl    string    `pg:",notnull" json:"avatarUrl"`
-	Rooms        []Room    `pg:"many2many:user_rooms" json:"rooms"`
+	Rooms        []Room    `pg:"many2many:user_rooms" json:"-"`
 }
 
 type Message struct {
 	Id       uuid.UUID `pg:",pk,type:uuid default gen_random_uuid()" json:"id"`
 	Text     string    `pg:",notnull" json:"text"`
-	RoomId   uuid.UUID `pg:",notnull" json:"roomId"`
+	RoomId   uuid.UUID `pg:",notnull,type:uuid" json:"roomId"`
 	Room     Room      `pg:"rel:has-one" json:"room"`
-	SenderId uuid.UUID `pg:",notnull" json:"senderId"`
+	SenderId uuid.UUID `pg:",notnull,type:uuid" json:"senderId"`
 	Sender   User      `pg:"rel:has-one" json:"sender"`
 }
 
 type UserRoom struct {
 	Id     uuid.UUID `pg:",pk,type:uuid default gen_random_uuid()" json:"id"`
-	UserId uuid.UUID `pg:",notnull"`
-	RoomId uuid.UUID `pg:",notnull"`
+	UserId uuid.UUID `pg:",notnull,type:uuid"`
+	RoomId uuid.UUID `pg:",notnull,type:uuid"`
 }
 
 type Room struct {

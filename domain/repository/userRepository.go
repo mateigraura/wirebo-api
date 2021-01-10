@@ -31,9 +31,5 @@ func (ur *UserRepositoryImpl) Insert(user *domain.User) error {
 		Returning("id").
 		Insert()
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }

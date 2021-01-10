@@ -1,6 +1,8 @@
 package storage
 
 import (
+	"context"
+	"fmt"
 	"strconv"
 	"sync"
 
@@ -10,6 +12,18 @@ import (
 
 var once sync.Once
 var connection *pg.DB
+
+type dbLogger struct{}
+
+func (d dbLogger) BeforeQuery(c context.Context, q *pg.QueryEvent) (context.Context, error) {
+	return c, nil
+}
+
+func (d dbLogger) AfterQuery(c context.Context, q *pg.QueryEvent)  error {
+	log, _ := q.FormattedQuery()
+	fmt.Println(string(log))
+	return nil
+}
 
 func Connection() *pg.DB {
 	once.Do(func() {
@@ -27,6 +41,7 @@ func Connection() *pg.DB {
 				PoolSize:     maxConn,
 			})
 	})
+	connection.AddQueryHook(dbLogger{})
 
 	return connection
 }

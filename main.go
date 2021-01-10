@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber"
+	"github.com/mateigraura/wirebo-api/storage"
 	"github.com/mateigraura/wirebo-api/utils"
 )
 
@@ -16,6 +17,8 @@ func main() {
 	app.Get("/", hello)
 
 	utils.LoadEnvFile(env)
+
+	storage.CreateSchema(storage.Connection())
 
 	if err := app.Listen(utils.GetEnvFile()[utils.Port]); err != nil {
 		log.Fatal(err)
