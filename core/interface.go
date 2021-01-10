@@ -7,5 +7,5 @@ import (
 
 type UserRepository interface {
 	GetById(id uuid.UUID) (domain.User, error)
-	Insert(user domain.User) (uuid.UUID, error)
+	Insert(user *domain.User) error
 }

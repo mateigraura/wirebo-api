@@ -10,7 +10,10 @@ import (
 
 func CreateSchema(db *pg.DB) {
 	models := []interface{}{
+		(*domain.UserRoom)(nil),
 		(*domain.User)(nil),
+		(*domain.Message)(nil),
+		(*domain.Room)(nil),
 	}
 
 	for _, model := range models {
