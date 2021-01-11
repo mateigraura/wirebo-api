@@ -2,7 +2,7 @@ package storage
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"strconv"
 	"sync"
 
@@ -20,8 +20,8 @@ func (d dbLogger) BeforeQuery(c context.Context, q *pg.QueryEvent) (context.Cont
 }
 
 func (d dbLogger) AfterQuery(c context.Context, q *pg.QueryEvent)  error {
-	log, _ := q.FormattedQuery()
-	fmt.Println(string(log))
+	query, _ := q.FormattedQuery()
+	log.Println(string(query))
 	return nil
 }
 

@@ -20,3 +20,7 @@ type RoomRepository interface {
 
 	InsertMapping(values []interface{}) error
 }
+
+type MessageRepository interface {
+	Insert(message *domain.Message) error
+}
