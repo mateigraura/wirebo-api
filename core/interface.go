@@ -22,5 +22,7 @@ type RoomRepository interface {
 }
 
 type MessageRepository interface {
+	GetByRoomId(roomId uuid.UUID) ([]domain.Message, error)
+
 	Insert(message *domain.Message) error
 }
