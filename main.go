@@ -1,30 +1,37 @@
 package main
 
 import (
+	"github.com/mateigraura/wirebo-api/storage"
 	"log"
+	"net/http"
 	"os"
 
-	"github.com/gofiber/fiber"
-	"github.com/mateigraura/wirebo-api/storage"
+	"github.com/gin-gonic/gin"
+	"github.com/mateigraura/wirebo-api/core"
 	"github.com/mateigraura/wirebo-api/utils"
 )
 
 func main() {
 	env := os.Args[1]
-
-	app := fiber.New()
-
-	app.Get("/", hello)
-
 	utils.LoadEnvFile(env)
 
-	storage.CreateSchema(storage.Connection())
+	storage.CreateSchema(storage.Connection(false))
 
-	if err := app.Listen(utils.GetEnvFile()[utils.Port]); err != nil {
+	wsServer := core.NewWsServer()
+	go wsServer.Run()
+
+	router := gin.Default()
+	router.GET("/", hello)
+	router.GET("/ws/", func(c *gin.Context) {
+		log.Println(c.Request)
+		core.ServeWs(wsServer, c.Writer, c.Request)
+	})
+
+	if err := router.Run(utils.GetEnvFile()[utils.Port]); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func hello(ctx *fiber.Ctx) {
-	ctx.Send("Hello")
+func hello(c *gin.Context) {
+	c.String(http.StatusOK, "Hello World!")
 }

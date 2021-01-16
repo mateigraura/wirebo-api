@@ -25,7 +25,7 @@ func (d dbLogger) AfterQuery(c context.Context, q *pg.QueryEvent)  error {
 	return nil
 }
 
-func Connection() *pg.DB {
+func Connection(withLogs bool) *pg.DB {
 	once.Do(func() {
 		env := utils.GetEnvFile()
 
@@ -41,7 +41,10 @@ func Connection() *pg.DB {
 				PoolSize:     maxConn,
 			})
 	})
-	connection.AddQueryHook(dbLogger{})
+
+	if withLogs {
+		connection.AddQueryHook(dbLogger{})
+	}
 
 	return connection
 }
