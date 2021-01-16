@@ -35,7 +35,7 @@ type WsClient struct {
 	Name     string    `json:"name"`
 	send     chan []byte
 	conn     *websocket.Conn
-	rooms    map[*Room]bool // roomId fits better ?
+	rooms    map[*domain.Room]bool // roomId fits better ?
 	wsServer *WsServer
 }
 
@@ -47,7 +47,7 @@ func NewClient(conn *websocket.Conn, wsServer *WsServer, id, name string) *WsCli
 		Name:     name,
 		conn:     conn,
 		send:     make(chan []byte, 256),
-		rooms:    make(map[*Room]bool),
+		rooms:    make(map[*domain.Room]bool),
 		wsServer: wsServer,
 	}
 }

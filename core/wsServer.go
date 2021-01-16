@@ -48,6 +48,6 @@ func (w *WsServer) unregisterClient(client *WsClient) {
 	fmt.Printf("See you %s\n", client.Name)
 }
 
-func (w *WsServer) findRoomById(id uuid.UUID) *Room {
+func (w *WsServer) findRoomById(id uuid.UUID) *RoomHandler {
 	return nil
 }
