@@ -25,7 +25,7 @@ func (d dbLogger) AfterQuery(c context.Context, q *pg.QueryEvent)  error {
 	return nil
 }
 
-func Connection(withLogs bool) *pg.DB {
+func Connection(withLogs... bool) *pg.DB {
 	once.Do(func() {
 		env := utils.GetEnvFile()
 
@@ -42,7 +42,7 @@ func Connection(withLogs bool) *pg.DB {
 			})
 	})
 
-	if withLogs {
+	if len(withLogs) > 0 && withLogs[0] {
 		connection.AddQueryHook(dbLogger{})
 	}
 
