@@ -2,13 +2,11 @@ package crypto
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	"github.com/mateigraura/wirebo-api/utils"
 	"time"
 )
 
-// TODO: move to .env
 const expireTime = 604800
-const issuer = "localhost"
-const secret = "secret"
 
 type JwtClaims struct {
 	Id string
@@ -16,16 +14,18 @@ type JwtClaims struct {
 }
 
 func GenerateJwt(id string) (string, error) {
+	envVariables := utils.GetEnvFile()
+
 	claims := JwtClaims{
 		Id: id,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().UTC().Unix() + expireTime,
-			Issuer:    issuer,
+			Issuer:    envVariables[utils.JWTIssuer],
 		},
 	}
 	payload := jwt.NewWithClaims(jwt.SigningMethodHS256, &claims)
 
-	return payload.SignedString([]byte(secret))
+	return payload.SignedString([]byte(envVariables[utils.JWTSecret]))
 }
 
 func ValidateJwt(signedToken string) (bool, error) {
@@ -42,11 +42,13 @@ func GetClaims(signedToken string) (*JwtClaims, error) {
 }
 
 func parseToken(signedToken string) (*JwtClaims, error) {
+	envVariables := utils.GetEnvFile()
+
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&JwtClaims{},
 		func(token *jwt.Token) (interface{}, error) {
-			return []byte(secret), nil
+			return []byte(envVariables[utils.JWTSecret]), nil
 		},
 	)
 
