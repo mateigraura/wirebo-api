@@ -13,6 +13,7 @@ func CreateSchema() {
 		(*domain.User)(nil),
 		(*domain.Message)(nil),
 		(*domain.Room)(nil),
+		(*domain.Authorization)(nil),
 	}
 
 	db := Connection()

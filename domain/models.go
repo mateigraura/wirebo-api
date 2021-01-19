@@ -43,3 +43,10 @@ type Room struct {
 	Users    []User     `pg:"many2many:user_rooms" json:"users"`
 	Messages []*Message `pg:"rel:has-many"`
 }
+
+type Authorization struct {
+	BaseModel
+	Token        string    `pg:",notnull"`
+	RefreshToken string    `pg:",notnull"`
+	OwnerId      uuid.UUID `pg:",notnull,type:uuid"`
+}
