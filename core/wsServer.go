@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/mateigraura/wirebo-api/core/handlers"
 
 	"github.com/google/uuid"
 )
@@ -48,6 +49,6 @@ func (w *WsServer) unregisterClient(client *WsClient) {
 	fmt.Printf("See you %s\n", client.Name)
 }
 
-func (w *WsServer) findRoomById(id uuid.UUID) *RoomHandler {
+func (w *WsServer) findRoomById(id uuid.UUID) *handlers.RoomHandler {
 	return nil
 }

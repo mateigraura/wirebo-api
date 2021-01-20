@@ -152,7 +152,7 @@ func (c *WsClient) handleNewMessage(msg []byte) {
 	}
 
 	// switch actions
-	if room := c.wsServer.findRoomById(message.RoomId); room != nil {
-		room.broadcast <- &message
-	}
+	//if room := c.wsServer.findRoomById(message.RoomId); room != nil {
+	//	room.broadcast <- &message
+	//}
 }

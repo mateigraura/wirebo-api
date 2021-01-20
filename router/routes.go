@@ -1,9 +1,11 @@
 package router
 
 import (
+	"github.com/mateigraura/wirebo-api/middleware"
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mateigraura/wirebo-api/controllers"
 	"github.com/mateigraura/wirebo-api/core"
 	"github.com/mateigraura/wirebo-api/utils"
 )
@@ -28,9 +30,13 @@ func Run() {
 func registerAPIGroup(router *gin.Engine) {
 	api := router.Group("/api")
 	{
-		api.POST("/login")
-		api.POST("/register")
+		api.POST("/login", controllers.Login)
+		api.POST("/register", controllers.Register)
+		api.POST("/refresh", controllers.Refresh)
 
-		api.GET("/rooms")
+		_ = api.Group("").Use(middleware.Authorization())
+		{
+			api.GET("/rooms")
+		}
 	}
 }

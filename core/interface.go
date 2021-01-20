@@ -8,7 +8,11 @@ import (
 type UserRepository interface {
 	GetById(id uuid.UUID) (domain.User, error)
 
+	GetClaims(id uuid.UUID) (domain.Authorization, error)
+
 	Insert(user *domain.User) error
+
+	InsertClaims(payload *domain.Authorization) error
 }
 
 type RoomRepository interface {

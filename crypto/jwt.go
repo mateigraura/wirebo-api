@@ -1,9 +1,10 @@
 package crypto
 
 import (
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/mateigraura/wirebo-api/utils"
-	"time"
 )
 
 const expireTime = 604800
@@ -11,6 +12,10 @@ const expireTime = 604800
 type JwtClaims struct {
 	Id string
 	jwt.StandardClaims
+}
+
+var isExpired = func(claims JwtClaims) bool {
+	return claims.ExpiresAt < time.Now().UTC().Unix()
 }
 
 func GenerateJwt(id string) (string, error) {
@@ -28,17 +33,25 @@ func GenerateJwt(id string) (string, error) {
 	return payload.SignedString([]byte(envVariables[utils.JWTSecret]))
 }
 
-func ValidateJwt(signedToken string) (bool, error) {
+func ValidateJwt(signedToken string) (JwtClaims, error) {
 	claims, err := parseToken(signedToken)
 	if err != nil {
-		return false, err
+		return JwtClaims{}, err
 	}
 
-	return isExpired(claims)
+	if isExpired(*claims) {
+		return JwtClaims{}, ErrJwtExpired
+	}
+
+	return *claims, nil
 }
 
-func GetClaims(signedToken string) (*JwtClaims, error) {
-	return parseToken(signedToken)
+func GetClaims(signedToken string) (JwtClaims, error) {
+	claims, err := parseToken(signedToken)
+	if err != nil {
+		return JwtClaims{}, err
+	}
+	return *claims, nil
 }
 
 func parseToken(signedToken string) (*JwtClaims, error) {
@@ -62,12 +75,4 @@ func parseToken(signedToken string) (*JwtClaims, error) {
 	}
 
 	return claims, nil
-}
-
-func isExpired(claims *JwtClaims) (bool, error) {
-	if claims.ExpiresAt < time.Now().UTC().Unix() {
-		return true, ErrJwtExpired
-	}
-
-	return true, nil
 }
