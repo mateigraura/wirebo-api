@@ -1,15 +1,15 @@
-package core
+package ws
 
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/mateigraura/wirebo-api/models"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
-	"github.com/mateigraura/wirebo-api/domain"
 )
 
 const (
@@ -30,29 +30,29 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
-type WsClient struct {
+type Client struct {
 	Id       uuid.UUID `json:"id"`
 	Name     string    `json:"name"`
 	send     chan []byte
 	conn     *websocket.Conn
-	rooms    map[*domain.Room]bool // roomId fits better ?
-	wsServer *WsServer
+	rooms    map[*models.Room]bool // roomId fits better ?
+	wsServer *Server
 }
 
-func NewClient(conn *websocket.Conn, wsServer *WsServer, id, name string) *WsClient {
+func NewClient(conn *websocket.Conn, wsServer *Server, id, name string) *Client {
 	_id, _ := uuid.Parse(id)
 
-	return &WsClient{
+	return &Client{
 		Id:       _id,
 		Name:     name,
 		conn:     conn,
 		send:     make(chan []byte, 256),
-		rooms:    make(map[*domain.Room]bool),
+		rooms:    make(map[*models.Room]bool),
 		wsServer: wsServer,
 	}
 }
 
-func ServeWs(wsServer *WsServer, w http.ResponseWriter, r *http.Request) {
+func ServeWs(wsServer *Server, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -66,7 +66,7 @@ func ServeWs(wsServer *WsServer, w http.ResponseWriter, r *http.Request) {
 	go client.readPump()
 }
 
-func (c *WsClient) writePump() {
+func (c *Client) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
@@ -111,7 +111,7 @@ func (c *WsClient) writePump() {
 	}
 }
 
-func (c *WsClient) readPump() {
+func (c *Client) readPump() {
 	defer func() {
 		c.wsServer.unregister <- c
 		if err := c.conn.Close(); err != nil {
@@ -144,8 +144,8 @@ func (c *WsClient) readPump() {
 	}
 }
 
-func (c *WsClient) handleNewMessage(msg []byte) {
-	var message domain.Message
+func (c *Client) handleNewMessage(msg []byte) {
+	var message models.Message
 	if err := json.Unmarshal(msg, &message); err != nil {
 		log.Println(err)
 		return

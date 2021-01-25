@@ -1,31 +1,30 @@
-package core
+package ws
 
 import (
 	"fmt"
-	"github.com/mateigraura/wirebo-api/core/handlers"
-
 	"github.com/google/uuid"
+	"github.com/mateigraura/wirebo-api/core/handlers"
 )
 
 const pubSubChannel = "pub-sub-chan"
 
-type WsServer struct {
+type Server struct {
 	clients    map[uuid.UUID]bool
 	rooms      map[uuid.UUID]bool
-	register   chan *WsClient
-	unregister chan *WsClient
+	register   chan *Client
+	unregister chan *Client
 }
 
-func NewWsServer() *WsServer {
-	return &WsServer{
+func NewWsServer() *Server {
+	return &Server{
 		clients:    make(map[uuid.UUID]bool),
 		rooms:      make(map[uuid.UUID]bool),
-		register:   make(chan *WsClient),
-		unregister: make(chan *WsClient),
+		register:   make(chan *Client),
+		unregister: make(chan *Client),
 	}
 }
 
-func (w *WsServer) Run() {
+func (w *Server) Run() {
 	for {
 		select {
 		case client := <-w.register:
@@ -37,18 +36,18 @@ func (w *WsServer) Run() {
 	}
 }
 
-func (w *WsServer) registerClient(client *WsClient) {
+func (w *Server) registerClient(client *Client) {
 	w.clients[client.Id] = true
 	fmt.Printf("Welcome %s\n", client.Name)
 }
 
-func (w *WsServer) unregisterClient(client *WsClient) {
+func (w *Server) unregisterClient(client *Client) {
 	if _, ok := w.clients[client.Id]; ok {
 		delete(w.clients, client.Id)
 	}
 	fmt.Printf("See you %s\n", client.Name)
 }
 
-func (w *WsServer) findRoomById(id uuid.UUID) *handlers.RoomHandler {
+func (w *Server) findRoomById(id uuid.UUID) *handlers.RoomHandler {
 	return nil
 }

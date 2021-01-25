@@ -2,31 +2,35 @@ package core
 
 import (
 	"github.com/google/uuid"
-	"github.com/mateigraura/wirebo-api/domain"
+	"github.com/mateigraura/wirebo-api/models"
 )
 
 type UserRepository interface {
-	GetById(id uuid.UUID) (domain.User, error)
+	GetById(id uuid.UUID) (models.User, error)
 
-	GetClaims(id uuid.UUID) (domain.Authorization, error)
+	GetByEmail(email string) (models.User, error)
 
-	Insert(user *domain.User) error
+	GetClaims(id uuid.UUID) (models.Authorization, error)
 
-	InsertClaims(payload *domain.Authorization) error
+	UpdateClaims(claims *models.Authorization) error
+
+	Insert(user *models.User) error
+
+	InsertClaims(payload *models.Authorization) error
 }
 
 type RoomRepository interface {
-	GetRoomsFor(userId uuid.UUID) ([]domain.Room, error)
+	GetRoomsFor(userId uuid.UUID) ([]models.Room, error)
 
-	GetUsersInRoom(room domain.Room) (domain.Room, error)
+	GetUsersInRoom(room models.Room) (models.Room, error)
 
-	Insert(room *domain.Room) error
+	Insert(room *models.Room) error
 
 	InsertMapping(values []interface{}) error
 }
 
 type MessageRepository interface {
-	GetByRoomId(roomId uuid.UUID) ([]domain.Message, error)
+	GetByRoomId(roomId uuid.UUID) ([]models.Message, error)
 
-	Insert(message *domain.Message) error
+	Insert(message *models.Message) error
 }

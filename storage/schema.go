@@ -1,19 +1,19 @@
 package storage
 
 import (
+	models2 "github.com/mateigraura/wirebo-api/models"
 	"log"
 
 	"github.com/go-pg/pg/v10/orm"
-	"github.com/mateigraura/wirebo-api/domain"
 )
 
 func CreateSchema() {
 	models := []interface{}{
-		(*domain.UserRoom)(nil),
-		(*domain.User)(nil),
-		(*domain.Message)(nil),
-		(*domain.Room)(nil),
-		(*domain.Authorization)(nil),
+		(*models2.UserRoom)(nil),
+		(*models2.User)(nil),
+		(*models2.Message)(nil),
+		(*models2.Room)(nil),
+		(*models2.Authorization)(nil),
 	}
 
 	db := Connection()

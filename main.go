@@ -9,10 +9,14 @@ import (
 )
 
 func main() {
-	env := os.Args[1]
+	var env string
+	if len(os.Args) > 0 && os.Args[1] != "" {
+		env = os.Args[1]
+	} else {
+		env = "dev"
+	}
+
 	utils.LoadEnvFile(env)
-
 	storage.CreateSchema()
-
 	router.Run()
 }

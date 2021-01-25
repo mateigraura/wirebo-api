@@ -1,17 +1,17 @@
 package router
 
 import (
-	"github.com/mateigraura/wirebo-api/middleware"
 	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mateigraura/wirebo-api/controllers"
-	"github.com/mateigraura/wirebo-api/core"
+	"github.com/mateigraura/wirebo-api/middleware"
 	"github.com/mateigraura/wirebo-api/utils"
+	"github.com/mateigraura/wirebo-api/ws"
 )
 
 func Run() {
-	wsServer := core.NewWsServer()
+	wsServer := ws.NewWsServer()
 	go wsServer.Run()
 
 	router := gin.Default()
@@ -19,7 +19,7 @@ func Run() {
 	registerAPIGroup(router)
 
 	router.GET("/ws/", func(c *gin.Context) {
-		core.ServeWs(wsServer, c.Writer, c.Request)
+		ws.ServeWs(wsServer, c.Writer, c.Request)
 	})
 
 	if err := router.Run(utils.GetEnvFile()[utils.Port]); err != nil {

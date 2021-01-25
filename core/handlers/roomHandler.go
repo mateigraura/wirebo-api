@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"github.com/mateigraura/wirebo-api/domain"
+	"github.com/mateigraura/wirebo-api/models"
 )
 
 type RoomHandler struct {
-	broadcast chan *domain.Message
+	broadcast chan *models.Message
 }
