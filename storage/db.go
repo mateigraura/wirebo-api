@@ -19,13 +19,13 @@ func (d dbLogger) BeforeQuery(c context.Context, q *pg.QueryEvent) (context.Cont
 	return c, nil
 }
 
-func (d dbLogger) AfterQuery(c context.Context, q *pg.QueryEvent)  error {
+func (d dbLogger) AfterQuery(c context.Context, q *pg.QueryEvent) error {
 	query, _ := q.FormattedQuery()
 	log.Println(string(query))
 	return nil
 }
 
-func Connection(withLogs bool) *pg.DB {
+func Connection(withLogs ...bool) *pg.DB {
 	once.Do(func() {
 		env := utils.GetEnvFile()
 
@@ -42,7 +42,7 @@ func Connection(withLogs bool) *pg.DB {
 			})
 	})
 
-	if withLogs {
+	if len(withLogs) > 0 && withLogs[0] {
 		connection.AddQueryHook(dbLogger{})
 	}
 

@@ -2,17 +2,17 @@ package repository
 
 import (
 	"github.com/google/uuid"
-	"github.com/mateigraura/wirebo-api/domain"
+	"github.com/mateigraura/wirebo-api/models"
 	"github.com/mateigraura/wirebo-api/storage"
 )
 
 type RoomRepositoryImpl struct {
 }
 
-func (r *RoomRepositoryImpl) GetRoomsFor(userId uuid.UUID) ([]domain.Room, error) {
+func (r *RoomRepositoryImpl) GetRoomsFor(userId uuid.UUID) ([]models.Room, error) {
 	conn := storage.Connection()
 
-	rooms := new([]domain.Room)
+	rooms := new([]models.Room)
 	err := conn.Model(rooms).
 		Column("room.*").
 		Join("inner join user_rooms as ur on room.id = ur.room_id").
@@ -20,13 +20,13 @@ func (r *RoomRepositoryImpl) GetRoomsFor(userId uuid.UUID) ([]domain.Room, error
 		Select()
 
 	if err != nil {
-		return []domain.Room{}, err
+		return []models.Room{}, err
 	}
 
 	return *rooms, nil
 }
 
-func (r *RoomRepositoryImpl) GetUsersInRoom(room domain.Room) (domain.Room, error) {
+func (r *RoomRepositoryImpl) GetUsersInRoom(room models.Room) (models.Room, error) {
 	conn := storage.Connection()
 
 	err := conn.Model(&room.Users).
@@ -36,13 +36,13 @@ func (r *RoomRepositoryImpl) GetUsersInRoom(room domain.Room) (domain.Room, erro
 		Select()
 
 	if err != nil {
-		return domain.Room{}, err
+		return models.Room{}, err
 	}
 
 	return room, nil
 }
 
-func (r *RoomRepositoryImpl) Insert(room *domain.Room) error {
+func (r *RoomRepositoryImpl) Insert(room *models.Room) error {
 	conn := storage.Connection()
 
 	_, err := conn.Model(room).

@@ -1,4 +1,4 @@
-package domain
+package models
 
 import (
 	"time"
@@ -17,8 +17,8 @@ type User struct {
 	Name         string `pg:",unique" json:"name"`
 	Email        string `pg:",notnull,unique" json:"email"`
 	PasswordHash string `pg:",notnull,unique" json:"-"`
-	Username     string `pg:",notnull,unique" json:"userName"`
-	AvatarUrl    string `pg:",notnull" json:"avatarUrl"`
+	Username     string `pg:",notnull,unique" json:"username"`
+	AvatarUrl    string `json:"avatarUrl"`
 	Rooms        []Room `pg:"many2many:user_rooms" json:"-"`
 }
 
@@ -42,4 +42,11 @@ type Room struct {
 	Name     string     `pg:",notnull" json:"name"`
 	Users    []User     `pg:"many2many:user_rooms" json:"users"`
 	Messages []*Message `pg:"rel:has-many"`
+}
+
+type Authorization struct {
+	BaseModel
+	Token        string    `pg:",notnull"`
+	RefreshToken string    `pg:",notnull"`
+	OwnerId      uuid.UUID `pg:",notnull,unique,type:uuid"`
 }

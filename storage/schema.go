@@ -3,20 +3,22 @@ package storage
 import (
 	"log"
 
-	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
-	"github.com/mateigraura/wirebo-api/domain"
+	"github.com/mateigraura/wirebo-api/models"
 )
 
-func CreateSchema(db *pg.DB) {
-	models := []interface{}{
-		(*domain.UserRoom)(nil),
-		(*domain.User)(nil),
-		(*domain.Message)(nil),
-		(*domain.Room)(nil),
+func CreateSchema() {
+	entities := []interface{}{
+		(*models.UserRoom)(nil),
+		(*models.User)(nil),
+		(*models.Message)(nil),
+		(*models.Room)(nil),
+		(*models.Authorization)(nil),
 	}
 
-	for _, model := range models {
+	db := Connection()
+
+	for _, model := range entities {
 		err := db.Model(model).CreateTable(&orm.CreateTableOptions{IfNotExists: true})
 		if err != nil {
 			log.Fatal(err)

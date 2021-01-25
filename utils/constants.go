@@ -9,6 +9,8 @@ const (
 	MaxConn   = "MAX_CONN"
 	MinConn   = "MIN_CONN"
 	RedisHost = "REDIS_HOST"
+	JWTSecret = "JWT_SECRET"
+	JWTIssuer = "JWT_ISSUER"
 )
 
 const (
