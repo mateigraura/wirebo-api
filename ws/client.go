@@ -3,13 +3,13 @@ package ws
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/mateigraura/wirebo-api/models"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
+	"github.com/mateigraura/wirebo-api/models"
 )
 
 const (

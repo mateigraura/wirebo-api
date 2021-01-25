@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+
 	"github.com/google/uuid"
 	"github.com/mateigraura/wirebo-api/core"
 	"github.com/mateigraura/wirebo-api/crypto"

@@ -2,6 +2,7 @@ package ws
 
 import (
 	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/mateigraura/wirebo-api/core/handlers"
 )
