@@ -26,7 +26,7 @@ func GetPublicKey(c *gin.Context) {
 	})
 }
 
-func AddPubKey(c *gin.Context) {
+func AddPublicKey(c *gin.Context) {
 	var request map[string]interface{}
 	err := c.Bind(&request)
 	if err != nil {

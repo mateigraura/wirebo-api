@@ -14,7 +14,7 @@ func (kmr *KeyMapRepositoryImpl) Get(id uuid.UUID) (models.KeyMapping, error) {
 
 	keyMapping := new(models.KeyMapping)
 	err := conn.Model(keyMapping).
-		Where("id = ?", id).
+		Where(`"key_mapping"."owner_id" = ?`, id).
 		Select()
 
 	return *keyMapping, err
