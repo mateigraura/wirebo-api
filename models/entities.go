@@ -50,3 +50,9 @@ type Authorization struct {
 	RefreshToken string    `pg:",notnull"`
 	OwnerId      uuid.UUID `pg:",notnull,unique,type:uuid"`
 }
+
+type KeyMapping struct {
+	BaseModel
+	PubKey  string    `pg:",notnull"`
+	OwnerId uuid.UUID `pg:",notnull,unique,type:uuid"`
+}
