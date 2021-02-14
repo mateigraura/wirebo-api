@@ -34,3 +34,13 @@ type MessageRepository interface {
 
 	Insert(message *models.Message) error
 }
+
+type KeyMapperRepository interface {
+	Get(id uuid.UUID) (models.KeyMapping, error)
+
+	// DO_NOT_USE returns nil everytime
+	// until peer-keyChange advertising is implemented
+	Update(keyMapping *models.KeyMapping) error
+
+	Insert(keyMapping *models.KeyMapping) error
+}
