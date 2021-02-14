@@ -14,7 +14,7 @@ const invalidJwtToken = "Invalid or expired token"
 const bearerSplitOn = "Bearer "
 
 var returnUnauthorized = func(c *gin.Context, errMessage string) {
-	c.JSON(http.StatusUnauthorized, errMessage)
+	c.JSON(http.StatusUnauthorized, gin.H{"message": errMessage})
 	c.Abort()
 	return
 }

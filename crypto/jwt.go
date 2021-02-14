@@ -1,13 +1,12 @@
 package crypto
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/mateigraura/wirebo-api/utils"
 )
-
-const expireTime = 604800
 
 type JwtClaims struct {
 	Id string
@@ -20,11 +19,11 @@ var isExpired = func(claims JwtClaims) bool {
 
 func GenerateJwt(id string) (string, error) {
 	envVariables := utils.GetEnvFile()
-
+	minutesToExpiration, _ := strconv.Atoi(envVariables[utils.JWTExpiry])
 	claims := JwtClaims{
 		Id: id,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().UTC().Unix() + expireTime,
+			ExpiresAt: time.Now().UTC().Add(time.Minute * time.Duration(minutesToExpiration)).Unix(),
 			Issuer:    envVariables[utils.JWTIssuer],
 		},
 	}

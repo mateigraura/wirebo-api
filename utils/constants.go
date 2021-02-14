@@ -11,6 +11,7 @@ const (
 	RedisHost = "REDIS_HOST"
 	JWTSecret = "JWT_SECRET"
 	JWTIssuer = "JWT_ISSUER"
+	JWTExpiry = "JWT_EXPIRY_MINUTES"
 )
 
 const (
