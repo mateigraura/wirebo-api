@@ -9,16 +9,7 @@ import (
 	"github.com/mateigraura/wirebo-api/repository"
 )
 
-const badRequestBody = "Bad request body"
 
-const errMessage = "Failure"
-const okMessage = "Success"
-
-var responseMsg = func(message string) gin.H {
-	return gin.H{
-		"message": message,
-	}
-}
 
 func Login(c *gin.Context) {
 	var request models.LoginRequest

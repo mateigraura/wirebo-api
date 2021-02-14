@@ -34,9 +34,12 @@ func registerAPIGroup(router *gin.Engine) {
 		api.POST("/register", controllers.Register)
 		api.POST("/refresh", controllers.Refresh)
 
-		_ = api.Group("").Use(middleware.Authorization())
+		_ = api.Group("/auth").Use(middleware.Authorization())
 		{
 			api.GET("/rooms")
+
+			api.GET("/get-key", controllers.GetPublicKey)
+			api.POST("/add-key", controllers.AddPubKey)
 		}
 	}
 }
