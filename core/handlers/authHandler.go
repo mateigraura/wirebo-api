@@ -71,7 +71,7 @@ func (ah *AuthHandler) Login(request models.LoginRequest) (string, error) {
 }
 
 func (ah *AuthHandler) Refresh(jwtToken string) (string, error) {
-	tokenClaims, err := crypto.GetClaims(jwtToken)
+	tokenClaims, err := crypto.GetClaims(jwtToken, false)
 	if err != nil {
 		return "", err
 	}

@@ -2,6 +2,7 @@ package router
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mateigraura/wirebo-api/controllers"
@@ -39,7 +40,13 @@ func registerAPIGroup(router *gin.Engine) {
 
 		protected := api.Group("/p").Use(middleware.Authorization())
 		{
-			protected.GET("/rooms")
+			protected.GET("/rooms", func(c *gin.Context) {
+				id, ok := c.Get("id")
+				if !ok {
+					c.JSON(http.StatusInternalServerError, "Failure")
+				}
+				c.JSON(http.StatusOK, id)
+			})
 
 			protected.GET("/get-key", controllers.GetPublicKey)
 			protected.POST("/add-key", controllers.AddPublicKey)

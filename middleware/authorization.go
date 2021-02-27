@@ -15,8 +15,6 @@ const bearerSplitOn = "Bearer "
 
 var returnUnauthorized = func(c *gin.Context, errMessage string) {
 	c.JSON(http.StatusUnauthorized, gin.H{"message": errMessage})
-	c.Abort()
-	return
 }
 
 func Authorization() gin.HandlerFunc {
@@ -24,16 +22,22 @@ func Authorization() gin.HandlerFunc {
 		bearer := c.Request.Header.Get("Authorization")
 		if bearer == "" {
 			returnUnauthorized(c, noBearerPresent)
+			c.Abort()
+			return
 		}
 
 		ok, token := parseBearer(bearer)
 		if !ok {
 			returnUnauthorized(c, incorrectBearer)
+			c.Abort()
+			return
 		}
 
 		claims, err := crypto.ValidateJwt(token)
 		if err != nil {
 			returnUnauthorized(c, invalidJwtToken)
+			c.Abort()
+			return
 		} else {
 			c.Set("id", claims.Id)
 		}
