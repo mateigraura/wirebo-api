@@ -1,6 +1,7 @@
-package crypto
+package authorization
 
 import (
+	"github.com/mateigraura/wirebo-api/crypto"
 	"strconv"
 	"time"
 
@@ -39,7 +40,7 @@ func ValidateJwt(signedToken string) (JwtClaims, error) {
 	}
 
 	if isExpired(*claims) {
-		return JwtClaims{}, ErrJwtExpired
+		return JwtClaims{}, crypto.ErrJwtExpired
 	}
 
 	return *claims, nil
@@ -77,7 +78,7 @@ func parseToken(signedToken string) (*JwtClaims, error) {
 
 	claims, ok := token.Claims.(*JwtClaims)
 	if !ok {
-		return nil, ErrJwtParse
+		return nil, crypto.ErrJwtParse
 	}
 
 	return claims, nil
@@ -99,7 +100,7 @@ func parseTokenUnverified(signedToken string) (*JwtClaims, error) {
 			if validationErr.Errors&(jwt.ValidationErrorExpired) != 0 && token != nil {
 				claims, ok := token.Claims.(*JwtClaims)
 				if !ok {
-					return nil, ErrJwtParse
+					return nil, crypto.ErrJwtParse
 				}
 
 				return claims, nil
@@ -109,5 +110,5 @@ func parseTokenUnverified(signedToken string) (*JwtClaims, error) {
 		return nil, err
 	}
 
-	return nil, ErrJwtParse
+	return nil, crypto.ErrJwtParse
 }

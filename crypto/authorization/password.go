@@ -1,4 +1,4 @@
-package crypto
+package authorization
 
 import "golang.org/x/crypto/bcrypt"
 

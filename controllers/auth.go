@@ -9,8 +9,6 @@ import (
 	"github.com/mateigraura/wirebo-api/repository"
 )
 
-
-
 func Login(c *gin.Context) {
 	var request models.LoginRequest
 	err := c.Bind(&request)
