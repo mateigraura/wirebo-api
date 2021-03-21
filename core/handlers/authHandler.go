@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/mateigraura/wirebo-api/core"
-	"github.com/mateigraura/wirebo-api/crypto"
+	auth "github.com/mateigraura/wirebo-api/crypto/authorization"
 	"github.com/mateigraura/wirebo-api/models"
 )
 
@@ -23,7 +23,7 @@ func NewAuthHandler(userRepository core.UserRepository) AuthHandler {
 }
 
 func (ah *AuthHandler) Register(request models.RegisterRequest) (bool, error) {
-	pswHash, err := crypto.HashPassword(request.Password)
+	pswHash, err := auth.HashPassword(request.Password)
 	if err != nil {
 		return false, err
 	}
@@ -49,7 +49,7 @@ func (ah *AuthHandler) Login(request models.LoginRequest) (string, error) {
 		return "", err
 	}
 
-	if !crypto.CheckEqual(request.Password, user.PasswordHash) {
+	if !auth.CheckEqual(request.Password, user.PasswordHash) {
 		return "", errors.New("invalid password")
 	}
 
@@ -71,7 +71,7 @@ func (ah *AuthHandler) Login(request models.LoginRequest) (string, error) {
 }
 
 func (ah *AuthHandler) Refresh(jwtToken string) (string, error) {
-	tokenClaims, err := crypto.GetClaims(jwtToken, false)
+	tokenClaims, err := auth.GetClaims(jwtToken, false)
 	if err != nil {
 		return "", err
 	}
@@ -98,7 +98,7 @@ func (ah *AuthHandler) Refresh(jwtToken string) (string, error) {
 }
 
 func makeAuthorization(ownerId uuid.UUID) (models.Authorization, error) {
-	jwt, err := crypto.GenerateJwt(ownerId.String())
+	jwt, err := auth.GenerateJwt(ownerId.String())
 	if err != nil {
 		return models.Authorization{}, err
 	}

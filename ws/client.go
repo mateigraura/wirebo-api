@@ -151,6 +151,7 @@ func (c *Client) handleNewMessage(msg []byte) {
 		return
 	}
 
+	log.Println(message.Text)
 	// switch actions
 	//if room := c.wsServer.findRoomById(message.RoomId); room != nil {
 	//	room.broadcast <- &message

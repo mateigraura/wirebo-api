@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mateigraura/wirebo-api/crypto"
+	"github.com/mateigraura/wirebo-api/crypto/authorization"
 )
 
 const noBearerPresent = "No authorization bearer provided"
@@ -33,7 +33,7 @@ func Authorization() gin.HandlerFunc {
 			return
 		}
 
-		claims, err := crypto.ValidateJwt(token)
+		claims, err := authorization.ValidateJwt(token)
 		if err != nil {
 			returnUnauthorized(c, invalidJwtToken)
 			c.Abort()
