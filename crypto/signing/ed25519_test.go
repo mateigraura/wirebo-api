@@ -2,9 +2,10 @@ package signing
 
 import (
 	"encoding/base64"
+	"testing"
+
 	"github.com/mateigraura/wirebo-api/crypto"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestVerifyForCorrectSignature_ShouldPass(t *testing.T) {

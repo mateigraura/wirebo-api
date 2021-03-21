@@ -1,11 +1,11 @@
 package middleware
 
 import (
-	"github.com/mateigraura/wirebo-api/crypto/authorization"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mateigraura/wirebo-api/crypto/authorization"
 )
 
 const noBearerPresent = "No authorization bearer provided"
