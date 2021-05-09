@@ -1,12 +1,12 @@
 package authorization
 
 import (
+	utils2 "github.com/mateigraura/wirebo-api/core/utils"
 	"github.com/mateigraura/wirebo-api/crypto"
 	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/mateigraura/wirebo-api/utils"
 )
 
 type JwtClaims struct {
@@ -19,18 +19,18 @@ var isExpired = func(claims JwtClaims) bool {
 }
 
 func GenerateJwt(id string) (string, error) {
-	envVariables := utils.GetEnvFile()
-	minutesToExpiration, _ := strconv.Atoi(envVariables[utils.JWTExpiry])
+	envVariables := utils2.GetEnvFile()
+	minutesToExpiration, _ := strconv.Atoi(envVariables[utils2.JWTExpiry])
 	claims := JwtClaims{
 		Id: id,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().UTC().Add(time.Minute * time.Duration(minutesToExpiration)).Unix(),
-			Issuer:    envVariables[utils.JWTIssuer],
+			Issuer:    envVariables[utils2.JWTIssuer],
 		},
 	}
 	payload := jwt.NewWithClaims(jwt.SigningMethodHS256, &claims)
 
-	return payload.SignedString([]byte(envVariables[utils.JWTSecret]))
+	return payload.SignedString([]byte(envVariables[utils2.JWTSecret]))
 }
 
 func ValidateJwt(signedToken string) (JwtClaims, error) {
@@ -62,13 +62,13 @@ func GetClaims(signedToken string, verify bool) (JwtClaims, error) {
 }
 
 func parseToken(signedToken string) (*JwtClaims, error) {
-	envVariables := utils.GetEnvFile()
+	envVariables := utils2.GetEnvFile()
 
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&JwtClaims{},
 		func(token *jwt.Token) (interface{}, error) {
-			return []byte(envVariables[utils.JWTSecret]), nil
+			return []byte(envVariables[utils2.JWTSecret]), nil
 		},
 	)
 
@@ -85,13 +85,13 @@ func parseToken(signedToken string) (*JwtClaims, error) {
 }
 
 func parseTokenUnverified(signedToken string) (*JwtClaims, error) {
-	envVariables := utils.GetEnvFile()
+	envVariables := utils2.GetEnvFile()
 
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&JwtClaims{},
 		func(token *jwt.Token) (interface{}, error) {
-			return []byte(envVariables[utils.JWTSecret]), nil
+			return []byte(envVariables[utils2.JWTSecret]), nil
 		},
 	)
 

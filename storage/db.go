@@ -2,12 +2,12 @@ package storage
 
 import (
 	"context"
+	utils2 "github.com/mateigraura/wirebo-api/core/utils"
 	"log"
 	"strconv"
 	"sync"
 
 	"github.com/go-pg/pg/v10"
-	"github.com/mateigraura/wirebo-api/utils"
 )
 
 var once sync.Once
@@ -27,16 +27,16 @@ func (d dbLogger) AfterQuery(c context.Context, q *pg.QueryEvent) error {
 
 func Connection(withLogs ...bool) *pg.DB {
 	once.Do(func() {
-		env := utils.GetEnvFile()
+		env := utils2.GetEnvFile()
 
-		minConn, _ := strconv.Atoi(env[utils.MinConn])
-		maxConn, _ := strconv.Atoi(env[utils.MaxConn])
+		minConn, _ := strconv.Atoi(env[utils2.MinConn])
+		maxConn, _ := strconv.Atoi(env[utils2.MaxConn])
 		connection = pg.Connect(
 			&pg.Options{
-				Addr:         env[utils.DbHost],
-				User:         env[utils.DbUser],
-				Password:     env[utils.DbPsw],
-				Database:     env[utils.DbName],
+				Addr:         env[utils2.DbHost],
+				User:         env[utils2.DbUser],
+				Password:     env[utils2.DbPsw],
+				Database:     env[utils2.DbName],
 				MinIdleConns: minConn,
 				PoolSize:     maxConn,
 			})

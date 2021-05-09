@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/mateigraura/wirebo-api/models"
 	"github.com/mateigraura/wirebo-api/storage"
@@ -34,17 +36,16 @@ func (ur *UserRepositoryImpl) GetByEmail(email string) (models.User, error) {
 func (ur *UserRepositoryImpl) GetClaims(id uuid.UUID) (models.Authorization, error) {
 	conn := storage.Connection()
 
-	var authPayload models.Authorization
-	err := conn.Model(&authPayload).
+	authPayload := new(models.Authorization)
+	err := conn.Model(authPayload).
 		Where(`"authorization"."owner_id" = ?`, id).
 		Select()
 
-	return authPayload, err
+	return *authPayload, err
 }
 
 func (ur *UserRepositoryImpl) UpdateClaims(claims *models.Authorization) error {
 	conn := storage.Connection()
-
 	_, err := conn.Model(claims).
 		Where(`"authorization"."owner_id" = ?`, claims.OwnerId).
 		Update()
@@ -54,7 +55,6 @@ func (ur *UserRepositoryImpl) UpdateClaims(claims *models.Authorization) error {
 
 func (ur *UserRepositoryImpl) Insert(user *models.User) error {
 	conn := storage.Connection()
-
 	_, err := conn.Model(user).
 		Returning("id").
 		Insert()
@@ -64,10 +64,31 @@ func (ur *UserRepositoryImpl) Insert(user *models.User) error {
 
 func (ur *UserRepositoryImpl) InsertClaims(payload *models.Authorization) error {
 	conn := storage.Connection()
-
 	_, err := conn.Model(payload).
 		Returning("id").
 		Insert()
 
 	return err
+}
+
+func (ur *UserRepositoryImpl) Update(user *models.User) error {
+	conn := storage.Connection()
+	_, err := conn.Model(user).
+		Where(`"user"."id" = ?`, user.Id).
+		Update()
+
+	return err
+}
+
+func (ur *UserRepositoryImpl) Search(input string) ([]models.User, error) {
+	conn := storage.Connection()
+	users := new([]models.User)
+	err := conn.Model(users).
+		Where(
+			`"user"."username" like ?`,
+			fmt.Sprintf("%%%s%%", input),
+		).
+		Select()
+
+	return *users, err
 }

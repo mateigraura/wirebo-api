@@ -9,6 +9,7 @@ import (
 )
 
 func TestVerifyForCorrectSignature_ShouldPass(t *testing.T) {
+	t.Parallel()
 	pubKey := "XXnByecIEjQ8Ir/10T/YnCGWX6W48BW+fgmF+PP7iWQ="
 	sig := "TJwsQOAbAw9n0twlVXJ2P7FmthrVWaIX5N7j5j6ebxPY0FgpTbRWm7TkbN1jepvQvAXQpsAp8ZLR5OseZnVjBQ=="
 
@@ -21,6 +22,7 @@ func TestVerifyForCorrectSignature_ShouldPass(t *testing.T) {
 }
 
 func TestVerifyForIncorrectPubKeyLength_ShouldErr(t *testing.T) {
+	t.Parallel()
 	pubKey := "XXnByecIEjQ8Ir/10T/YnCGWX6W48BW+fgmF+PP7iWQQ=="
 	sig := "TJwsQOAbAw9n0twlVXJ2P7FmthrVWaIX5N7j5j6ebxPY0FgpTbRWm7TkbN1jepvQvAXQpsAp8ZLR5OseZnVjBQ=="
 
@@ -33,6 +35,7 @@ func TestVerifyForIncorrectPubKeyLength_ShouldErr(t *testing.T) {
 }
 
 func TestVerifyForIncorrectSig_ShouldErr(t *testing.T) {
+	t.Parallel()
 	pubKey := "XXnByecIEjQ8Ir/10T/YnCGWX6W48BW+fgmF+PP7iWQ="
 	sig := "TJwsQOAbAw9n0twlVXJ2P7FmthrVWaIX5n7j5j6ebxPY0FgpTbRWm7TkbN1jepvQvAXQpsAp8ZLR5OseZnVjBQ=="
 

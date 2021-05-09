@@ -15,6 +15,7 @@ func CreateSchema() {
 		(*models.Room)(nil),
 		(*models.Authorization)(nil),
 		(*models.KeyMapping)(nil),
+		(*models.Avatar)(nil),
 	}
 
 	db := Connection()
