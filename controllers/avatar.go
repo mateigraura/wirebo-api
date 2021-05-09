@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/mateigraura/wirebo-api/core/handlers"
 	"github.com/mateigraura/wirebo-api/crypto/hashing"
 	"github.com/mateigraura/wirebo-api/repository"
-	"net/http"
 )
 
 const (

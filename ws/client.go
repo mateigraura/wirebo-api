@@ -3,11 +3,11 @@ package ws
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/mateigraura/wirebo-api/models"

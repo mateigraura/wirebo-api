@@ -2,15 +2,16 @@ package ws
 
 import (
 	"context"
-	"github.com/mateigraura/wirebo-api/core/converters"
 	"log"
 
 	"github.com/google/uuid"
 	"github.com/mateigraura/wirebo-api/core"
+	"github.com/mateigraura/wirebo-api/core/converters"
 	"github.com/mateigraura/wirebo-api/models"
 )
 
 const pubSubChannel = "pub-sub-chan"
+
 var ctx = context.Background()
 
 type Server struct {
