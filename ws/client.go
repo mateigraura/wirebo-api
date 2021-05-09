@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/mateigraura/wirebo-api/models"
@@ -31,35 +32,45 @@ var upgrader = websocket.Upgrader{
 }
 
 type Client struct {
-	Id       uuid.UUID `json:"id"`
-	Name     string    `json:"name"`
+	id       uuid.UUID
 	send     chan []byte
 	conn     *websocket.Conn
-	rooms    map[*models.Room]bool // roomId fits better ?
 	wsServer *Server
 }
 
-func NewClient(conn *websocket.Conn, wsServer *Server, id, name string) *Client {
-	_id, _ := uuid.Parse(id)
-
+func NewClient(conn *websocket.Conn, wsServer *Server, id uuid.UUID) *Client {
 	return &Client{
-		Id:       _id,
-		Name:     name,
+		id:       id,
 		conn:     conn,
 		send:     make(chan []byte, 256),
-		rooms:    make(map[*models.Room]bool),
 		wsServer: wsServer,
 	}
 }
 
-func ServeWs(wsServer *Server, w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
+func ServeWs(wsServer *Server, c *gin.Context) {
+	id := c.Param("id")
+	key := c.Param("key")
+	if id == "" {
+		log.Println("empty id")
+		return
+	}
+	if key == "" {
+		log.Println("empty key")
+		return
+	}
+	parsedId, err := uuid.Parse(id)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	client := NewClient(conn, wsServer, "user_id", "user_name")
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	client := NewClient(conn, wsServer, parsedId)
 	client.wsServer.register <- client
 
 	go client.writePump()
@@ -97,7 +108,7 @@ func (c *Client) writePump() {
 				_, _ = w.Write(<-c.send)
 			}
 
-			if err := w.Close(); err != nil {
+			if err = w.Close(); err != nil {
 				log.Println(err)
 				return
 			}
@@ -140,20 +151,16 @@ func (c *Client) readPump() {
 		}
 
 		msg = bytes.TrimSpace(bytes.Replace(msg, newline, space, -1))
-		c.handleNewMessage(msg)
+		c.pushNewMessage(msg)
 	}
 }
 
-func (c *Client) handleNewMessage(msg []byte) {
+func (c *Client) pushNewMessage(msg []byte) {
 	var message models.Message
 	if err := json.Unmarshal(msg, &message); err != nil {
 		log.Println(err)
 		return
 	}
 
-	log.Println(message.Text)
-	// switch actions
-	//if room := c.wsServer.findRoomById(message.RoomId); room != nil {
-	//	room.broadcast <- &message
-	//}
+	c.wsServer.handleMessage(message)
 }

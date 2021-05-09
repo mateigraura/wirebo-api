@@ -18,7 +18,7 @@ type User struct {
 	Email        string `pg:",notnull,unique" json:"email"`
 	PasswordHash string `pg:",notnull,unique" json:"-"`
 	Username     string `pg:",notnull,unique" json:"username"`
-	AvatarUrl    string `json:"avatarUrl"`
+	AvatarHash   string `json:"avatar"`
 	Rooms        []Room `pg:"many2many:user_rooms" json:"-"`
 }
 
@@ -55,4 +55,11 @@ type KeyMapping struct {
 	BaseModel
 	PubKey  string    `pg:",notnull"`
 	OwnerId uuid.UUID `pg:",notnull,unique,type:uuid"`
+}
+
+type Avatar struct {
+	BaseModel
+	UserId  uuid.UUID `pg:",notnull,unique,type:uuid"`
+	Hash    string    `pg:",notnull,unique"`
+	Content []byte    `pg:",notnull,type:bytea"`
 }

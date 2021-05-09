@@ -33,7 +33,6 @@ func (ah *AuthHandler) Register(request models.RegisterRequest) (bool, error) {
 		Email:        request.Email,
 		PasswordHash: pswHash,
 		Username:     request.Username,
-		AvatarUrl:    "//avatar",
 	}
 
 	if err = ah.userRepository.Insert(&user); err != nil {

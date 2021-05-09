@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/go-pg/pg/v10"
-	"github.com/mateigraura/wirebo-api/utils"
+	"github.com/mateigraura/wirebo-api/core/utils"
 )
 
 var once sync.Once

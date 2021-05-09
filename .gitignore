@@ -21,3 +21,7 @@
 .env.dev
 .env.testing
 
+mock/**
+mock
+
+

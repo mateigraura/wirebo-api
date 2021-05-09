@@ -1,12 +1,12 @@
 package authorization
 
 import (
-	"github.com/mateigraura/wirebo-api/crypto"
 	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/mateigraura/wirebo-api/utils"
+	"github.com/mateigraura/wirebo-api/core/utils"
+	"github.com/mateigraura/wirebo-api/crypto"
 )
 
 type JwtClaims struct {
