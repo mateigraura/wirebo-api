@@ -45,7 +45,6 @@ func Register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, okMessage)
-	return
 }
 
 func Refresh(c *gin.Context) {
@@ -57,7 +56,7 @@ func Refresh(c *gin.Context) {
 	}
 	if request["token"] == nil {
 		c.JSON(http.StatusBadRequest, responseMsg(badRequestBody))
-                return
+		return
 	}
 	handler := handlers.NewAuthHandler(&repository.UserRepositoryImpl{})
 	token, err := handler.Refresh(request["token"].(string))
