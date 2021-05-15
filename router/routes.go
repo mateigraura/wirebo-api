@@ -46,6 +46,7 @@ func registerAPIGroup(router *gin.Engine) {
 			protected.GET("/get-key", controllers.GetPublicKey)
 			protected.POST("/add-key", controllers.AddPublicKey)
 			protected.POST("/avatar", controllers.UploadAvatar)
+			protected.GET("/search/:query", controllers.Search)
 		}
 	}
 }

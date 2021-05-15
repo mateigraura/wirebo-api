@@ -33,6 +33,7 @@ func (ah *AuthHandler) Register(request models.RegisterRequest) (bool, error) {
 		Email:        request.Email,
 		PasswordHash: pswHash,
 		Username:     request.Username,
+		AvatarHash:   "//avatar",
 	}
 
 	if err = ah.userRepository.Insert(&user); err != nil {
@@ -57,7 +58,6 @@ func (ah *AuthHandler) Login(request models.LoginRequest) (string, error) {
 		return "", err
 	}
 
-	// TODO: refactor
 	_, err = ah.userRepository.GetClaims(user.Id)
 	if err != nil {
 		err = ah.userRepository.InsertClaims(&authorization)

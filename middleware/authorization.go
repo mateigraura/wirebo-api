@@ -8,10 +8,12 @@ import (
 	"github.com/mateigraura/wirebo-api/crypto/authorization"
 )
 
-const noBearerPresent = "No authorization bearer provided"
-const incorrectBearer = "Incorrect bearer provided"
-const invalidJwtToken = "Invalid or expired token"
-const bearerSplitOn = "Bearer "
+const (
+	noBearerPresent = "No authorization bearer provided"
+	incorrectBearer = "Incorrect bearer provided"
+	invalidJwtToken = "Invalid or expired token"
+	bearerSplitOn   = "Bearer "
+)
 
 var returnUnauthorized = func(c *gin.Context, errMessage string) {
 	c.JSON(http.StatusUnauthorized, gin.H{"message": errMessage})
