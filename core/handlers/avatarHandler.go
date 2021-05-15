@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/hex"
-	"errors"
 	"io"
 
 	"github.com/google/uuid"
@@ -10,13 +9,6 @@ import (
 	"github.com/mateigraura/wirebo-api/core/converters"
 	"github.com/mateigraura/wirebo-api/crypto"
 	"github.com/mateigraura/wirebo-api/models"
-)
-
-var (
-	SerializationErr        = errors.New("serialization error")
-	EntityNotFoundErr       = errors.New("could not get entity")
-	EntityInsertionErr      = errors.New("could not save entity")
-	InvalidInputProvidedErr = errors.New("invalid input provided")
 )
 
 type AvatarHandler struct {
@@ -39,7 +31,7 @@ func NewAvatarHandler(
 
 func (ah *AvatarHandler) Save(file io.Reader, userId string) (string, error) {
 	imgBytes, err := converters.ResizeFromFile(file, 0)
- 	if err != nil {
+	if err != nil {
 		return "", InvalidInputProvidedErr
 	}
 
