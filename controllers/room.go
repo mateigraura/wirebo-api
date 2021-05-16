@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"github.com/mateigraura/wirebo-api/crypto/hashing"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mateigraura/wirebo-api/core/handlers"
+	"github.com/mateigraura/wirebo-api/crypto/hashing"
 	"github.com/mateigraura/wirebo-api/models"
 	"github.com/mateigraura/wirebo-api/repository"
 )

@@ -7,7 +7,6 @@ import (
 	"github.com/mateigraura/wirebo-api/middleware"
 	"github.com/mateigraura/wirebo-api/repository"
 	"github.com/mateigraura/wirebo-api/ws"
-	"log"
 )
 
 func Run() {
@@ -15,7 +14,7 @@ func Run() {
 	registerWsServer(router)
 	registerAPIGroup(router)
 	if err := router.Run(utils.GetEnvFile()[utils.Port]); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
 
