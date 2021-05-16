@@ -18,9 +18,9 @@ type UserRepository interface {
 
 type RoomRepository interface {
 	GetRoomsFor(userId uuid.UUID) ([]models.Room, error)
-	GetUsersInRoom(room models.Room) (models.Room, error)
+	GetUsersInRoom(room *models.Room) error
 	Insert(room *models.Room) error
-	InsertMapping(values []interface{}) error
+	InsertMapping(values []*models.UserRoom) error
 }
 
 type MessageRepository interface {

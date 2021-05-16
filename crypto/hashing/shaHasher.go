@@ -20,6 +20,7 @@ func (sh *ShaHasher) HashObj(obj interface{}) ([]byte, error) {
 	return hash[:], nil
 }
 
-func (sh *ShaHasher) Hash(content []byte) ([]byte, error) {
-	return nil, nil
+func (sh *ShaHasher) Hash(content []byte) []byte {
+	hash := sha256.Sum256(content)
+	return hash[:]
 }

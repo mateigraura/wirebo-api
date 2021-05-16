@@ -26,20 +26,13 @@ func (r *RoomRepositoryImpl) GetRoomsFor(userId uuid.UUID) ([]models.Room, error
 	return *rooms, nil
 }
 
-func (r *RoomRepositoryImpl) GetUsersInRoom(room models.Room) (models.Room, error) {
+func (r *RoomRepositoryImpl) GetUsersInRoom(room *models.Room) error {
 	conn := storage.Connection()
-
-	err := conn.Model(&room.Users).
+	return conn.Model(&room.Users).
 		Column("user.*").
 		Join(`inner join user_rooms as ur on "user"."id" = ur.user_id`).
 		Where("ur.room_id = ?", room.Id).
 		Select()
-
-	if err != nil {
-		return models.Room{}, err
-	}
-
-	return room, nil
 }
 
 func (r *RoomRepositoryImpl) Insert(room *models.Room) error {
@@ -52,10 +45,10 @@ func (r *RoomRepositoryImpl) Insert(room *models.Room) error {
 	return err
 }
 
-func (r *RoomRepositoryImpl) InsertMapping(values []interface{}) error {
+func (r *RoomRepositoryImpl) InsertMapping(mapping []*models.UserRoom) error {
 	conn := storage.Connection()
 
-	for _, v := range values {
+	for _, v := range mapping {
 		_, err := conn.Model(v).Insert()
 		if err != nil {
 			return err

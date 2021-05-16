@@ -1,15 +1,13 @@
 package router
 
 import (
-	"log"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/mateigraura/wirebo-api/controllers"
 	"github.com/mateigraura/wirebo-api/core/utils"
 	"github.com/mateigraura/wirebo-api/middleware"
 	"github.com/mateigraura/wirebo-api/repository"
 	"github.com/mateigraura/wirebo-api/ws"
+	"log"
 )
 
 func Run() {
@@ -26,6 +24,7 @@ func registerAPIGroup(router *gin.Engine) {
 	api := router.Group("/api")
 	{
 		api.GET("/avatar/:hash", controllers.GetAvatar)
+
 		auth := api.Group("/auth")
 		{
 			auth.POST("/login", controllers.Login)
@@ -35,19 +34,15 @@ func registerAPIGroup(router *gin.Engine) {
 
 		protected := api.Group("/p").Use(middleware.Authorization())
 		{
-			protected.GET("/rooms", func(c *gin.Context) {
-				id, ok := c.Get("id")
-				if !ok {
-					c.JSON(http.StatusInternalServerError, "Failure")
-				}
-				c.JSON(http.StatusOK, id)
-			})
-
 			protected.GET("/get-key", controllers.GetPublicKey)
 			protected.POST("/add-key", controllers.AddPublicKey)
+
 			protected.POST("/avatar", controllers.UploadAvatar)
 			protected.GET("/search/:query", controllers.Search)
 			protected.GET("/user", controllers.GetUser)
+
+			protected.GET("/rooms", controllers.GetRooms)
+			protected.POST("/room/new", controllers.CreateRoom)
 		}
 	}
 }

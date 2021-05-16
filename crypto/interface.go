@@ -6,5 +6,5 @@ type Signer interface {
 
 type Hasher interface {
 	HashObj(obj interface{}) ([]byte, error)
-	Hash(content []byte) ([]byte, error)
+	Hash(content []byte) []byte
 }

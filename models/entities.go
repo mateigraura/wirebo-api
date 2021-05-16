@@ -39,9 +39,10 @@ type UserRoom struct {
 
 type Room struct {
 	BaseModel
-	Name     string     `pg:",notnull" json:"name"`
-	Users    []User     `pg:"many2many:user_rooms" json:"users"`
-	Messages []*Message `pg:"rel:has-many"`
+	Name      string     `pg:",notnull" json:"name"`
+	IsPrivate bool       `pg:",notnull" json:"isPrivate"`
+	Users     []User     `pg:"many2many:user_rooms" json:"users,omitempty"`
+	Messages  []*Message `pg:"rel:has-many" json:"messages,omitempty"`
 }
 
 type Authorization struct {
