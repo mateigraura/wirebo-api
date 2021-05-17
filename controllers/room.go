@@ -56,3 +56,26 @@ func GetRooms(c *gin.Context) {
 		"rooms": rooms,
 	})
 }
+
+func GetRoom(c *gin.Context) {
+	id1, ok := c.Get("id")
+	if !ok {
+		c.JSON(http.StatusInternalServerError, responseMsg(errMessage))
+		return
+	}
+	id2 := c.Param("id")
+
+	roomHandler := handlers.NewRoomHandler(
+		&repository.RoomRepositoryImpl{},
+		&hashing.ShaHasher{},
+	)
+	room, err := roomHandler.GetPrivateRoomByName(id1.(string), id2)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, responseMsg(errMessage))
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"room": room,
+	})
+}

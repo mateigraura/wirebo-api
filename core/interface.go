@@ -17,6 +17,7 @@ type UserRepository interface {
 }
 
 type RoomRepository interface {
+	GetRoomByName(name string) (models.Room, error)
 	GetRoomsFor(userId uuid.UUID) ([]models.Room, error)
 	GetUsersInRoom(room *models.Room) error
 	Insert(room *models.Room) error

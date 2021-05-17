@@ -9,6 +9,16 @@ import (
 type RoomRepositoryImpl struct {
 }
 
+func (r *RoomRepositoryImpl) GetRoomByName(name string) (models.Room, error) {
+	conn := storage.Connection()
+	room := new(models.Room)
+	err := conn.Model(room).Where("name = ?", name).Select()
+	if err != nil {
+		return models.Room{}, err
+	}
+	return *room, nil
+}
+
 func (r *RoomRepositoryImpl) GetRoomsFor(userId uuid.UUID) ([]models.Room, error) {
 	conn := storage.Connection()
 

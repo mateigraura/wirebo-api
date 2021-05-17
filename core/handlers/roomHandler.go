@@ -24,6 +24,19 @@ func NewRoomHandler(
 	}
 }
 
+func (rh *RoomHandler) GetPrivateRoomByName(id1, id2 string) (models.Room, error) {
+	hash := rh.hasher.Hash([]byte(id1 + id2))
+	room, err := rh.roomRepository.GetRoomByName(hex.EncodeToString(hash))
+	if err != nil {
+		return models.Room{}, EntityNotFoundErr
+	}
+	err = rh.roomRepository.GetUsersInRoom(&room)
+	if err != nil {
+		return models.Room{}, EntityNotFoundErr
+	}
+	return room, nil
+}
+
 func (rh *RoomHandler) CreateRoom(request models.CreateRoomRequest) (models.Room, error) {
 	roomName := request.Name
 	if request.IsPrivate {

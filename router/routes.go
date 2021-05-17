@@ -42,6 +42,7 @@ func registerAPIGroup(router *gin.Engine) {
 
 			protected.GET("/rooms", controllers.GetRooms)
 			protected.POST("/room/new", controllers.CreateRoom)
+			protected.GET("/room/private/:id", controllers.GetRoom)
 		}
 	}
 }
