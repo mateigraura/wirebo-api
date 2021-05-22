@@ -9,13 +9,9 @@ import (
 )
 
 func GetPublicKey(c *gin.Context) {
-	id, ok := c.Get("id")
-	if !ok {
-		c.JSON(http.StatusBadRequest, responseMsg(badRequestBody))
-		return
-	}
+	id := c.Param("id")
 	handler := handlers.NewKeyMapHandler(&repository.KeyMapRepositoryImpl{})
-	pubKey, err := handler.GetKey(id.(string))
+	pubKey, err := handler.GetKey(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, responseMsg(errMessage))
 		return

@@ -33,7 +33,7 @@ func registerAPIGroup(router *gin.Engine) {
 
 		protected := api.Group("/p").Use(middleware.Authorization())
 		{
-			protected.GET("/get-key", controllers.GetPublicKey)
+			protected.GET("/get-key/:id", controllers.GetPublicKey)
 			protected.POST("/add-key", controllers.AddPublicKey)
 
 			protected.POST("/avatar", controllers.UploadAvatar)
