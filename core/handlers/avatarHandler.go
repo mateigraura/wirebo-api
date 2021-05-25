@@ -50,8 +50,15 @@ func (ah *AvatarHandler) Save(file io.Reader, userId string) (string, error) {
 	}
 
 	avatar.Hash = hex.EncodeToString(hash[:])
-	if err = ah.avatarRepository.Insert(avatar); err != nil {
-		return "", EntityInsertionErr
+	_, err = ah.avatarRepository.GetByUserId(avatar.UserId)
+	if err != nil {
+		if err = ah.avatarRepository.Insert(avatar); err != nil {
+			return "", EntityInsertionErr
+		}
+	} else {
+		if err = ah.avatarRepository.Update(avatar); err != nil {
+			return "", EntityUpdateErr
+		}
 	}
 
 	user, err := ah.userRepository.GetById(userIdUuid)

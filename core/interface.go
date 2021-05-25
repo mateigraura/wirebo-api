@@ -36,6 +36,8 @@ type KeyMapperRepository interface {
 }
 
 type AvatarRepository interface {
+	GetByUserId(userId uuid.UUID) (models.Avatar, error)
 	GetByHash(hash string) (models.Avatar, error)
 	Insert(avatar *models.Avatar) error
+	Update(avatar *models.Avatar) error
 }
