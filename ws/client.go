@@ -38,7 +38,7 @@ var upgrader = websocket.Upgrader{
 
 type EventMessage struct {
 	Action  string         `json:"action"`
-	Message models.Message `json:"payload"`
+	Message models.Message `json:"message"`
 }
 
 type Client struct {
