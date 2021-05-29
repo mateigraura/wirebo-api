@@ -25,6 +25,7 @@ func CreateRoom(c *gin.Context) {
 
 	roomHandler := handlers.NewRoomHandler(
 		&repository.RoomRepositoryImpl{},
+		&repository.MessageRepositoryImpl{},
 		&hashing.ShaHasher{},
 	)
 	createdRoom, err := roomHandler.CreateRoom(createRoomRequest)
@@ -45,7 +46,11 @@ func GetRooms(c *gin.Context) {
 		return
 	}
 
-	roomHandler := handlers.NewRoomHandler(&repository.RoomRepositoryImpl{}, nil)
+	roomHandler := handlers.NewRoomHandler(
+		&repository.RoomRepositoryImpl{},
+		&repository.MessageRepositoryImpl{},
+		&hashing.ShaHasher{},
+	)
 	rooms, err := roomHandler.GetRoomsForUser(id.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, responseMsg(errMessage))
@@ -67,6 +72,7 @@ func GetRoom(c *gin.Context) {
 
 	roomHandler := handlers.NewRoomHandler(
 		&repository.RoomRepositoryImpl{},
+		&repository.MessageRepositoryImpl{},
 		&hashing.ShaHasher{},
 	)
 	room, err := roomHandler.GetPrivateRoomByName(id1.(string), id2)
@@ -77,5 +83,23 @@ func GetRoom(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"room": room,
+	})
+}
+
+func GetRoomMessages(c *gin.Context) {
+	roomId := c.Param("id")
+	roomHandler := handlers.NewRoomHandler(
+		&repository.RoomRepositoryImpl{},
+		&repository.MessageRepositoryImpl{},
+		&hashing.ShaHasher{},
+	)
+	roomMessages, err := roomHandler.GetRoomMessages(roomId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, responseMsg(errMessage))
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"messages": roomMessages,
 	})
 }

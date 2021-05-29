@@ -2,7 +2,6 @@ package ws
 
 import (
 	"bytes"
-	"encoding/json"
 	"log"
 	"net/http"
 	"time"
@@ -10,7 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
+	"github.com/mateigraura/wirebo-api/core/converters"
 	"github.com/mateigraura/wirebo-api/models"
+)
+
+const (
+	MESSAGE = "message"
+	TYPING  = "typing"
 )
 
 const (
@@ -31,6 +36,11 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
+type EventMessage struct {
+	Action  string         `json:"action"`
+	Message models.Message `json:"payload"`
+}
+
 type Client struct {
 	id       uuid.UUID
 	send     chan []byte
@@ -49,15 +59,6 @@ func NewClient(conn *websocket.Conn, wsServer *Server, id uuid.UUID) *Client {
 
 func ServeWs(wsServer *Server, c *gin.Context) {
 	id := c.Param("id")
-	key := c.Param("key")
-	if id == "" {
-		log.Println("empty id")
-		return
-	}
-	if key == "" {
-		log.Println("empty key")
-		return
-	}
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
 		log.Println(err)
@@ -77,6 +78,7 @@ func ServeWs(wsServer *Server, c *gin.Context) {
 	go client.readPump()
 }
 
+// writePump listens on the send channel and pushes data on the ws stream
 func (c *Client) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
@@ -122,6 +124,7 @@ func (c *Client) writePump() {
 	}
 }
 
+// readPump listens for incoming events and reads the content
 func (c *Client) readPump() {
 	defer func() {
 		c.wsServer.unregister <- c
@@ -155,12 +158,15 @@ func (c *Client) readPump() {
 	}
 }
 
-func (c *Client) pushNewMessage(msg []byte) {
-	var message models.Message
-	if err := json.Unmarshal(msg, &message); err != nil {
+func (c *Client) pushNewMessage(eventBytes []byte) {
+	var event EventMessage
+	if err := converters.Unmarshal(eventBytes, &event); err != nil {
 		log.Println(err)
 		return
 	}
 
-	c.wsServer.handleMessage(message)
+	switch event.Action {
+	case MESSAGE:
+		c.wsServer.handleMessage(event.Message)
+	}
 }

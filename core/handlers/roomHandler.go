@@ -10,17 +10,20 @@ import (
 )
 
 type RoomHandler struct {
-	roomRepository core.RoomRepository
-	hasher         crypto.Hasher
+	roomRepository    core.RoomRepository
+	messageRepository core.MessageRepository
+	hasher            crypto.Hasher
 }
 
 func NewRoomHandler(
 	roomRepository core.RoomRepository,
+	messageRepository core.MessageRepository,
 	hasher crypto.Hasher,
 ) RoomHandler {
 	return RoomHandler{
-		roomRepository: roomRepository,
-		hasher:         hasher,
+		roomRepository:    roomRepository,
+		messageRepository: messageRepository,
+		hasher:            hasher,
 	}
 }
 
@@ -81,8 +84,16 @@ func (rh *RoomHandler) GetRoomsForUser(userId string) ([]models.Room, error) {
 	return rooms, nil
 }
 
-func (rh *RoomHandler) JoinRoom(roomId string, user models.User) (bool, error) {
-	return false, nil
+func (rh *RoomHandler) GetRoomMessages(roomId string) ([]models.Message, error) {
+	roomIdParsed, err := uuid.Parse(roomId)
+	if err != nil {
+		return []models.Message{}, err
+	}
+	messages, err := rh.messageRepository.GetByRoomId(roomIdParsed)
+	if err != nil {
+		return []models.Message{}, err
+	}
+	return messages, nil
 }
 
 func (rh *RoomHandler) insertMapping(userRefs []string, roomId uuid.UUID) error {

@@ -41,8 +41,9 @@ func registerAPIGroup(router *gin.Engine) {
 			protected.GET("/user", controllers.GetUser)
 
 			protected.GET("/rooms", controllers.GetRooms)
-			protected.POST("/room/new", controllers.CreateRoom)
+			protected.GET("/room-messages/:id", controllers.GetRoomMessages)
 			protected.GET("/room/private/:id", controllers.GetRoom)
+			protected.POST("/room/new", controllers.CreateRoom)
 		}
 	}
 }
@@ -51,7 +52,7 @@ func registerWsServer(router *gin.Engine) {
 	wsServer := ws.NewWsServer(&repository.RoomRepositoryImpl{})
 	go wsServer.Run()
 
-	router.GET("/ws/:id/:key", func(c *gin.Context) {
+	router.GET("/ws/:id", func(c *gin.Context) {
 		ws.ServeWs(wsServer, c)
 	})
 }

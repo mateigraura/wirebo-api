@@ -10,8 +10,6 @@ import (
 	"github.com/mateigraura/wirebo-api/models"
 )
 
-const pubSubChannel = "pub-sub-chan"
-
 var ctx = context.Background()
 
 type Server struct {
@@ -50,6 +48,7 @@ func (s *Server) registerClient(client *Client) {
 	rooms, err := s.roomRepository.GetRoomsFor(client.id)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 
 	for _, room := range rooms {
@@ -58,6 +57,8 @@ func (s *Server) registerClient(client *Client) {
 			roomHandler.registerClient(client)
 		} else {
 			newRoomHandler := NewRoomHandler(room.Id)
+			s.roomHandlers[room.Id] = newRoomHandler
+			newRoomHandler.registerClient(client)
 			go newRoomHandler.RunRoomHandler()
 		}
 	}
@@ -97,7 +98,7 @@ func (s *Server) handleMessage(message models.Message) {
 
 func (s *Server) findRoomHandler(roomId uuid.UUID) (*RoomHandler, bool) {
 	if room, ok := s.roomHandlers[roomId]; ok {
-		return room, true
+		return room, room != nil
 	}
 
 	return nil, false
