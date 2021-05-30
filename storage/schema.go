@@ -23,7 +23,7 @@ func CreateSchema() {
 	for _, model := range entities {
 		err := db.Model(model).CreateTable(&orm.CreateTableOptions{IfNotExists: true})
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalln("failure while migrating", err.Error())
 		}
 	}
 }
