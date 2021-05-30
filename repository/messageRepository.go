@@ -15,7 +15,7 @@ func (m *MessageRepositoryImpl) GetByRoomId(roomId uuid.UUID) ([]models.Message,
 	var messages []models.Message
 	err := conn.Model(&messages).
 		Where(`"message"."room_id" = ?`, roomId).
-		Relation("Sender").
+		Order("created_at desc").
 		Select()
 
 	if err != nil {
