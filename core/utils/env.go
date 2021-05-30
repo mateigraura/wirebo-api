@@ -25,7 +25,7 @@ func LoadEnvFile(envName string) {
 			readFile(testEnv)
 			break
 		default:
-			log.Fatal("no env file")
+			readFile(prodEnv)
 		}
 	})
 }

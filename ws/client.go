@@ -2,6 +2,7 @@ package ws
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -45,10 +46,10 @@ type Client struct {
 	id       uuid.UUID
 	send     chan []byte
 	conn     *websocket.Conn
-	wsServer *Server
+	wsServer *server
 }
 
-func NewClient(conn *websocket.Conn, wsServer *Server, id uuid.UUID) *Client {
+func NewClient(conn *websocket.Conn, wsServer *server, id uuid.UUID) *Client {
 	return &Client{
 		id:       id,
 		conn:     conn,
@@ -57,7 +58,7 @@ func NewClient(conn *websocket.Conn, wsServer *Server, id uuid.UUID) *Client {
 	}
 }
 
-func ServeWs(wsServer *Server, c *gin.Context) {
+func ServeWs(wsServer *server, c *gin.Context) {
 	id := c.Param("id")
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
@@ -161,7 +162,7 @@ func (c *Client) readPump() {
 func (c *Client) pushNewMessage(eventBytes []byte) {
 	var event EventMessage
 	if err := converters.Unmarshal(eventBytes, &event); err != nil {
-		log.Println(err)
+		log.Println(fmt.Sprintf("read event unmarshal err %s", err.Error()))
 		return
 	}
 

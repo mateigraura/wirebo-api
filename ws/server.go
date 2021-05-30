@@ -2,7 +2,9 @@ package ws
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/mateigraura/wirebo-api/core"
@@ -12,25 +14,32 @@ import (
 
 var ctx = context.Background()
 
-type Server struct {
-	clients        map[uuid.UUID]*Client
-	roomHandlers   map[uuid.UUID]*RoomHandler
-	register       chan *Client
-	unregister     chan *Client
-	roomRepository core.RoomRepository
+type server struct {
+	clients           map[uuid.UUID]*Client
+	roomHandlers      map[uuid.UUID]*RoomHandler
+	register          chan *Client
+	unregister        chan *Client
+	roomRepository    core.RoomRepository
+	messageRepository core.MessageRepository
 }
 
-func NewWsServer(roomRepository core.RoomRepository) *Server {
-	return &Server{
-		clients:        make(map[uuid.UUID]*Client),
-		roomHandlers:   make(map[uuid.UUID]*RoomHandler),
-		register:       make(chan *Client),
-		unregister:     make(chan *Client),
-		roomRepository: roomRepository,
+type ServerArgs struct {
+	RoomRepository    core.RoomRepository
+	MessageRepository core.MessageRepository
+}
+
+func NewWsServer(args ServerArgs) *server {
+	return &server{
+		clients:           make(map[uuid.UUID]*Client),
+		roomHandlers:      make(map[uuid.UUID]*RoomHandler),
+		register:          make(chan *Client),
+		unregister:        make(chan *Client),
+		roomRepository:    args.RoomRepository,
+		messageRepository: args.MessageRepository,
 	}
 }
 
-func (s *Server) Run() {
+func (s *server) Run() {
 	for {
 		select {
 		case client := <-s.register:
@@ -42,9 +51,12 @@ func (s *Server) Run() {
 	}
 }
 
-func (s *Server) registerClient(client *Client) {
+func (s *server) registerClient(client *Client) {
+	if _, ok := s.clients[client.id]; ok {
+		log.Println("abort. client already connected", client.id)
+		return
+	}
 	s.clients[client.id] = client
-
 	rooms, err := s.roomRepository.GetRoomsFor(client.id)
 	if err != nil {
 		log.Println(err)
@@ -62,10 +74,10 @@ func (s *Server) registerClient(client *Client) {
 			go newRoomHandler.RunRoomHandler()
 		}
 	}
-	log.Printf("Client %s connected\n", client.id)
+	log.Println("connection established for client", client.id)
 }
 
-func (s *Server) unregisterClient(client *Client) {
+func (s *server) unregisterClient(client *Client) {
 	if _, ok := s.clients[client.id]; ok {
 		delete(s.clients, client.id)
 	}
@@ -81,22 +93,29 @@ func (s *Server) unregisterClient(client *Client) {
 			roomHandler.unregisterClient(client)
 		}
 	}
-	log.Printf("Client %s disconnected\n", client.id)
+	log.Println("connection lost for client", client.id)
 }
 
-func (s *Server) handleMessage(message models.Message) {
+func (s *server) handleMessage(message models.Message) {
 	roomHandler, ok := s.findRoomHandler(message.RoomId)
 	if ok {
+		message.CreatedAt = time.Now().UTC()
+		err := s.messageRepository.Insert(&message)
+		if err != nil {
+			log.Println(fmt.Sprintf("wsServer: message insertion %s", err.Error()))
+			// TODO: push msg to msg_queue and broadcast, rather than returning
+			return
+		}
 		msgBytes, err := converters.Marshal(message)
 		if err != nil {
-			log.Println(err)
+			log.Println(fmt.Sprintf("wsServer: message marshaling %s", err.Error()))
 			return
 		}
 		roomHandler.broadcast <- msgBytes
 	}
 }
 
-func (s *Server) findRoomHandler(roomId uuid.UUID) (*RoomHandler, bool) {
+func (s *server) findRoomHandler(roomId uuid.UUID) (*RoomHandler, bool) {
 	if room, ok := s.roomHandlers[roomId]; ok {
 		return room, room != nil
 	}

@@ -15,6 +15,11 @@ const (
 )
 
 const (
+	Red   = "\u001B[31m"
+	Green = "\033[32m"
+)
+
+const (
 	prodEnv = ".env"
 	devEnv  = ".env.dev"
 	testEnv = ".env.testing"

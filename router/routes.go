@@ -49,7 +49,11 @@ func registerAPIGroup(router *gin.Engine) {
 }
 
 func registerWsServer(router *gin.Engine) {
-	wsServer := ws.NewWsServer(&repository.RoomRepositoryImpl{})
+	wsServerArgs := ws.ServerArgs{
+		RoomRepository:    &repository.RoomRepositoryImpl{},
+		MessageRepository: &repository.MessageRepositoryImpl{},
+	}
+	wsServer := ws.NewWsServer(wsServerArgs)
 	go wsServer.Run()
 
 	router.GET("/ws/:id", func(c *gin.Context) {
