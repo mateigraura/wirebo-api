@@ -11,6 +11,7 @@ import (
 
 func Run() {
 	router := gin.Default()
+	router.Use(cors())
 	registerWsServer(router)
 	registerAPIGroup(router)
 	if err := router.Run(utils.GetEnvFile()[utils.Port]); err != nil {
@@ -59,4 +60,20 @@ func registerWsServer(router *gin.Engine) {
 	router.GET("/ws/:id", func(c *gin.Context) {
 		ws.ServeWs(wsServer, c)
 	})
+}
+
+func cors() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Credentials", "true")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Header("Access-Control-Allow-Methods", "POST,HEAD,PATCH, OPTIONS, GET, PUT")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
 }
