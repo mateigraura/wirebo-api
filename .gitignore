@@ -23,6 +23,7 @@
 
 mock/**
 mock
+**.log
 
 seeder/**
 seeder

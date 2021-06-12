@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/mateigraura/wirebo-api/logging"
 	"os"
 
 	"github.com/mateigraura/wirebo-api/core/utils"
@@ -16,6 +17,7 @@ func main() {
 		env = "dev"
 	}
 
+	logging.InitLoggers()
 	utils.LoadEnvFile(env)
 	storage.CreateSchema()
 	storage.CreateRedisClient()

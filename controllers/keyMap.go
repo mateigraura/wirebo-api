@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/mateigraura/wirebo-api/logging"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,10 +14,12 @@ func GetPublicKey(c *gin.Context) {
 	handler := handlers.NewKeyMapHandler(&repository.KeyMapRepositoryImpl{})
 	pubKey, err := handler.GetKey(id)
 	if err != nil {
+		logging.Error.Println("failed to fetch public key", err.Error())
 		c.JSON(http.StatusInternalServerError, responseMsg(errMessage))
 		return
 	}
 
+	logging.Info.Println("found public key", pubKey)
 	c.JSON(http.StatusOK, gin.H{
 		"publicKey": pubKey,
 	})
